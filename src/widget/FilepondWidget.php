@@ -74,6 +74,15 @@ class FilepondWidget extends InputWidget
         $script = <<<JS
             var instanceOptions = {$this->encodedInstanceOptions};
             var settingsOptions = {$this->settingsOptions};
+            
+            settingsOptions.server.load = (source, load, error, progress, abort, headers) => {
+                var myRequest = new Request(source);
+                fetch(myRequest).then(function(response) {
+                  response.blob().then(function(myBlob) {
+                    load(myBlob)
+                  });
+                });        
+            }
 
             if (instanceOptions.allowFileEncode) {
                 FilePond.registerPlugin(FilePondPluginFileEncode);
